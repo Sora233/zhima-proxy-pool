@@ -177,10 +177,13 @@ func (pool *ZhimaProxyPool) Get() (*Proxy, error) {
 	if result.Expired() {
 		pool.activeMutex.RUnlock()
 		pool.activeMutex.Lock()
-		err := pool.replaceActive(pos)
-		if err != nil {
-			pool.activeMutex.Unlock()
-			return nil, err
+		result = pool.activeProxy[pos]
+		if result.Expired() {
+			err := pool.replaceActive(pos)
+			if err != nil {
+				pool.activeMutex.Unlock()
+				return nil, err
+			}
 		}
 		pool.activeMutex.Unlock()
 		pool.activeMutex.RLock()
