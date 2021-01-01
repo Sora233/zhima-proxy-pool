@@ -6,6 +6,9 @@
 
 一个为[芝麻HTTP](http://h.zhimaruanjian.com)按次付费设计的Proxy Pool，以经济为目标。
 
+### 文档
+[Doc](https://pkg.go.dev/github.com/Sora233/zhima-proxy-pool)
+
 ### 实现
 
 Proxy分为两类，Active和Backup。
