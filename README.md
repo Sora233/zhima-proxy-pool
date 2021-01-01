@@ -2,7 +2,7 @@
 
 ----
 
-**[EN](README.md)**
+**[EN](README_en.md)**
 
 一个为[芝麻HTTP](http://h.zhimaruanjian.com)按次付费设计的Proxy Pool，以经济为目标。
 
