@@ -110,13 +110,14 @@ func (pool *ZhimaProxyPool) fillBackup() {
 			pool.Broadcast()
 			pool.Wait()
 		}
-		logger.WithField("backup size", pool.backupProxy.Len()).Debug("backup proxy not enough... fresh")
+		logger.WithField("backup_size", pool.backupProxy.Len()).Debug("backup proxy not enough... fresh")
 
 		var loopCount = 0
 
 		for pool.backupProxy.Len() < pool.Config.BackUpCap {
 			if loopCount >= 5 {
-				logger.WithField("backup size", pool.backupProxy.Len()).
+				logger.WithField("backup_size", pool.backupProxy.Len()).
+					WithField("backup_cap", pool.Config.BackUpCap).
 					Errorf("can not get enough backup proxy after fetch 5 times, check your timeLimit or backupCap")
 				break
 			}
@@ -162,7 +163,7 @@ func (pool *ZhimaProxyPool) fillBackup() {
 		if pool.checkBackup() {
 			pool.Broadcast()
 		}
-		logger.WithField("backup size", pool.backupProxy.Len()).Debug("backup freshed")
+		logger.WithField("backup_size", pool.backupProxy.Len()).Debug("backup freshed")
 		pool.L.Unlock()
 	}
 }
