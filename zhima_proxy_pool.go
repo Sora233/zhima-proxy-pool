@@ -153,6 +153,9 @@ func (pool *ZhimaProxyPool) fillBackup() {
 					if t.Sub(now) >= pool.Config.TimeLimit {
 						pool.backupProxy.PushBack(proxy)
 					}
+					if pool.backupProxy.Len() > pool.Config.BackUpCap {
+						break
+					}
 				}
 			}
 		}
@@ -227,7 +230,7 @@ func (pool *ZhimaProxyPool) Stop() error {
 }
 
 func (pool *ZhimaProxyPool) replaceActive(index int) (err error) {
-	log := logger.WithField("deleted_proxy", pool.activeProxy[index].ProxyString()).WithField("old_expire", pool.activeProxy[index].ExpireTime)
+	log := logger.WithField("deleted_proxy", pool.activeProxy[index].ProxyString()).WithField("old_expire", pool.activeProxy[index].ExpireTimeString)
 	oldProxy := pool.activeProxy[index]
 	newProxy, err := pool.popBackup()
 	if err != nil {
@@ -235,7 +238,7 @@ func (pool *ZhimaProxyPool) replaceActive(index int) (err error) {
 	}
 	if oldProxy == pool.activeProxy[index] {
 		pool.activeProxy[index] = newProxy
-		log.WithField("new_proxy", pool.activeProxy[index].ProxyString()).WithField("new_expire", pool.activeProxy[index].ExpireTime).Debug("deleted")
+		log.WithField("new_proxy", pool.activeProxy[index].ProxyString()).WithField("new_expire", pool.activeProxy[index].ExpireTimeString).Debug("deleted")
 	}
 	return nil
 }
