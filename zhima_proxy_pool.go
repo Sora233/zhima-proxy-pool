@@ -63,7 +63,6 @@ type response struct {
 // ZhimaProxyPool is the proxy pool implement
 type ZhimaProxyPool struct {
 	Config      *Config
-	api         string
 	backupProxy *list.List
 	activeProxy []*Proxy
 	*sync.Cond
@@ -122,7 +121,7 @@ func (pool *ZhimaProxyPool) fillBackup() {
 				break
 			}
 			loopCount += 1
-			resp, err := requests.Get(pool.api)
+			resp, err := requests.Get(pool.Config.ApiAddr)
 			if err != nil {
 				logger.Errorf("fresh failed %v", err)
 				pool.L.Unlock()
