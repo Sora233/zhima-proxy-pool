@@ -5,6 +5,7 @@ package zhima_proxy_pool
 
 import (
 	"container/list"
+	"errors"
 	"fmt"
 	"github.com/asmcos/requests"
 	"github.com/sirupsen/logrus"
@@ -170,6 +171,10 @@ func (pool *ZhimaProxyPool) Get() (*Proxy, error) {
 	var result *Proxy
 	pool.activeMutex.RLock()
 
+	if len(pool.activeProxy) == 0 {
+		return nil, errors.New("active proxy empty, please check your config or report bug")
+	}
+
 	pos := pool.index
 	pool.index = (pool.index + 1) % pool.Config.ActiveCap
 
@@ -247,6 +252,9 @@ func (pool *ZhimaProxyPool) loadActive(loader func() ([]*Proxy, error)) error {
 	for _, proxy := range loaded {
 		if !proxy.Expired() {
 			pool.activeProxy = append(pool.activeProxy, proxy)
+			if len(pool.activeProxy) == pool.Config.ActiveCap {
+				break
+			}
 		}
 	}
 	return nil
