@@ -244,7 +244,11 @@ func (pool *ZhimaProxyPool) loadActive(loader func() ([]*Proxy, error)) error {
 	if err != nil {
 		return err
 	}
-	pool.activeProxy = loaded
+	for _, proxy := range loaded {
+		if !proxy.Expired() {
+			pool.activeProxy = append(pool.activeProxy, proxy)
+		}
+	}
 	return nil
 }
 
