@@ -10,6 +10,7 @@ import (
 	"github.com/asmcos/requests"
 	"github.com/sirupsen/logrus"
 	"sync"
+	"sync/atomic"
 	"time"
 )
 
@@ -68,7 +69,7 @@ type ZhimaProxyPool struct {
 	*sync.Cond
 	activeMutex *sync.RWMutex
 	persister   Persister
-	index       int
+	index       int32
 }
 
 // Start() start the background task
@@ -178,8 +179,7 @@ func (pool *ZhimaProxyPool) Get() (*Proxy, error) {
 		return nil, errors.New("active proxy empty, please check your config or report bug")
 	}
 
-	pos := pool.index
-	pool.index = (pool.index + 1) % pool.Config.ActiveCap
+	pos := atomic.AddInt32(&pool.index, 1) % int32(pool.Config.ActiveCap)
 
 	result = pool.activeProxy[pos]
 	if result.Expired() {
@@ -187,7 +187,7 @@ func (pool *ZhimaProxyPool) Get() (*Proxy, error) {
 		pool.activeMutex.Lock()
 		result = pool.activeProxy[pos]
 		if result.Expired() {
-			err := pool.replaceActive(pos)
+			err := pool.replaceActive(int(pos))
 			if err != nil {
 				pool.activeMutex.Unlock()
 				return nil, err
