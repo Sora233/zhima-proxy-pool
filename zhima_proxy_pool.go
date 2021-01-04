@@ -290,9 +290,9 @@ func NewZhimaProxyPool(config *Config, persister Persister) *ZhimaProxyPool {
 		persister:   persister,
 	}
 	if err := pool.loadActive(pool.persister.Load); err != nil {
-		logger.WithField("active size", len(pool.activeProxy)).Debug("load err %v", err)
+		logger.WithField("active size", len(pool.activeProxy)).Debugf("load err %v", err)
 	} else {
-		logger.WithField("active size", len(pool.activeProxy)).Debug("load ok")
+		logger.WithField("active size", len(pool.activeProxy)).Debugf("load ok")
 	}
 	pool.Start()
 	return pool
