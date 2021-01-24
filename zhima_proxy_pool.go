@@ -206,14 +206,14 @@ func (pool *ZhimaProxyPool) Get() (*Proxy, error) {
 // Delete() remove a Proxy from active proxy list.
 // Use it when you make sure the proxy is not usable.
 // Abuse this may cost more.
-func (pool *ZhimaProxyPool) Delete(p *Proxy) bool {
+func (pool *ZhimaProxyPool) Delete(proxy string) bool {
 	pool.L.Lock()
 	defer pool.L.Unlock()
 
 	var result = false
 
 	for index, curProxy := range pool.activeProxy {
-		if curProxy.ProxyString() == p.ProxyString() {
+		if curProxy.ProxyString() == proxy {
 			err := pool.replaceActive(index)
 			if err == nil {
 				result = true
